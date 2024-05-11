@@ -37,21 +37,17 @@ public class Main {
                 if (c > 0){
                     return Auditor.fromArabicToRoman(c);
                 } else {
-                    return "throws Exception";
+                    throw new IllegalArgumentException("Не существует римских цифр меньше нуля");
                 }
-            } else {
-                return "throws Exception";
-            }
-        } else {
-            return "throws Exception";
+            } else throw new IllegalArgumentException();
         }
         return String.valueOf(c);
     }
 }
 class Auditor{
-    static boolean plus, pluses, divider, dividers, minus, minuses, star, stars, a, d, s, m;
+    static boolean plus, pluses, divider, dividers, minus, minuses, star, stars, a, d, s, m, sign;
     static boolean arabic1Ok, arabic2Ok, arabicOk;
-    static boolean roman1Ok, roman2Ok, romanOk;
+    static boolean roman1Ok, roman2Ok;
     static int fromRomanFirst, fromRomanSecond;
     static String[] members;
     static String[] romanOutgoingNumerals = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX", "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII", "XXVIII", "XXIX", "XXX", "XXXI", "XXXII", "XXXIII", "XXXIV", "XXXV", "XXXVI", "XXXVII", "XXXVIII", "XXXIX", "XL", "XLI", "XLII", "XLIII", "XLIV", "XLV", "XLVI", "XLVII", "XLVIII", "XLIX", "L", "LI", "LII", "LIII", "LIV", "LV", "LVI", "LVII", "LVIII", "LIX", "LX", "LXI", "LXII", "LXIII", "LXIV", "LXV", "LXVI", "LXVII", "LXVIII", "LXIX", "LXX", "LXXI", "LXXII", "LXXIII", "LXXIV", "LXXV", "LXXVI", "LXXVII", "LXXVIII", "LXXIX", "LXXX", "LXXXI", "LXXXII", "LXXXIII", "LXXXIV", "LXXXV", "LXXXVI", "LXXXVII", "LXXXVIII", "LXXXIX", "XC", "XCI", "XCII", "XCIII", "XCIV", "XCV", "XCVI", "XCVII", "XCVIII", "XCIX", "C"};
@@ -73,7 +69,19 @@ class Auditor{
         star = input.contains("*");                 // есть ли знак умножения
         stars = input.contains("**");
         m = star && !stars;
-        return (a & !d & !s & !m) | (!a & d & !s & !m) | (!a & !d & s & !m) | (!a & !d & !s & m);
+        sign = (a & !d & !s & !m) | (!a & d & !s & !m) | (!a & !d & s & !m) | (!a & !d & !s & m);
+        int countA = 0, countD = 0, countS = 0, countM = 0;
+        for (char element : input.toCharArray()){
+            if (element == '+') countA++;
+            if (element == '-') countD++;
+            if (element == '*') countS++;
+            if (element == '/') countM++;
+        }
+        if (sign & ((countA == 1) | (countD == 1) | (countS == 1) | (countM == 1))){
+            return sign;
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
     static String sign(){
         String symb;
@@ -103,7 +111,7 @@ class Auditor{
             memberFirst = members[0];
             return memberFirst;
         }
-        }
+    }
     static String member2(){
         memberSecond = members[1];
         return memberSecond;
@@ -144,7 +152,7 @@ class Auditor{
                 fromRomanSecond = i + 1;
             }
         }
-        return romanOk = roman1Ok & roman2Ok;
+        return roman1Ok & roman2Ok;
     }
     static String fromArabicToRoman(int preRes){
         return romanOutgoingNumerals[preRes - 1];
